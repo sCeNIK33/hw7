@@ -1,6 +1,6 @@
 window.addEventListener('DOMContentLoaded', async function(event) {
     let db = firebase.firestore()
-    let apiKey = 'your TMDB API key'
+    let apiKey = 'db3d694f164aefeeaecbe1ceaa2f38bb'
     let response = await fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=en-US`)
     let json = await response.json()
     let movies = json.results
@@ -55,3 +55,6 @@ window.addEventListener('DOMContentLoaded', async function(event) {
   //         be set when the "I've watched" button on each movie is clicked. Likewise, 
   //         when the list of movies loads and is shown on the page, only the movies 
   //         watched by the currently logged-in user should be opaque.
+
+
+  //firebase.auth.GoogleAuthProvider.PROVIDER_ID for google authentication log in
