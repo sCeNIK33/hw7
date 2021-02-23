@@ -1,46 +1,17 @@
 firebase.auth().onAuthStateChanged(async function(user) {
   
   if (user) {
-    console.log(`signed in`)
-    db.collection(`users`).doc(user.uid).set({
-      email:user.email
-    })
-
-    document.querySelector(`sign-in-or-sign-out`).innerHTML = `
-    <button class = "pt-4 px-16 text-white text-center">Sign Out</button>
-    `
-    document.querySelector(`.sign-in-or-sign-out`).addEventListener(`click`, function(event){
-      firebase.auth().signOut()
-      document.location.href = `movies.html`
-    })
-    
-  } else {
-      console.log(`signed out`)
-      document.querySelector()
-
-
-      let ui = new firebaseui.auth.AuthUI(firebase.auth())
-
-      let AuthUIConfig = {
-        signInOptions: [
-          firebase.auth.EmailAuthProvider.PROVIDER_ID
-        ],
-        signInSuccessURL: `movies.html`
-      }
-      ui.start(`.sign-in-or-sign-out`, AuthUIConfig)
-    
-
-
+    console.log(`user logged in`)
     let db = firebase.firestore()
     let apiKey = 'db3d694f164aefeeaecbe1ceaa2f38bb'
     let response = await fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=en-US`)
     let json = await response.json()
     let movies = json.results
     console.log(movies)
-    
+    //loop through all movies
     for (let i=0; i<movies.length; i++) {
       let movie = movies[i]
-      let docRef = await db.collection('watched').doc(`${movie.id}`).get()
+      let docRef = await db.collection('watched').doc(`${movie.id}-${user.uid}`).get()
       let watchedMovie = docRef.data()
       let opacityClass = ''
       if (watchedMovie) {
@@ -58,10 +29,58 @@ firebase.auth().onAuthStateChanged(async function(user) {
         event.preventDefault()
         let movieElement = document.querySelector(`.movie-${movie.id}`)
         movieElement.classList.add('opacity-20')
-        await db.collection('watched').doc(`${movie.id}`).set({})
+        await db.collection('watched').doc(`${movie.id}-${user.uid}`).set({})
+
+        // document.querySelector(`.sign-in-or-sign-out`).addEventListener('submit', async function(event) {
+        //   event.preventDefault()
+       
+        //   if (movieText.length > 0) {
+        //     let docRef = await db.collection('watched').add({
+        //       name: user.displayName,
+        //       email: user.email
+            
+        //     })
+        //   }
+      
+        // })
       }) 
-    }
-  }
+    }//end of for loop
+    
+    console.log(user)
+    let username = user.displayName
+
+    // console.log(`signed in`)
+    // db.collection(`users`).doc(user.uid).set({
+    //   email:user.email
+    // })
+
+    //sign out button
+    document.querySelector(`.sign-in-or-sign-out`).innerHTML= `
+    Signed in as ${username}
+    <button class = "sign-out text-pink-500 underline text-center">Sign Out</button>
+    `
+    document.querySelector(`.sign-in-or-sign-out`).addEventListener(`click`, function(event){
+      firebase.auth().signOut()
+      document.location.href = `movies.html`
+    })
+    
+  } else {
+      console.log(`signed out`)
+      let ui = new firebaseui.auth.AuthUI(firebase.auth())
+
+      let authUIConfig = {
+        signInOptions: [
+          firebase.auth.EmailAuthProvider.PROVIDER_ID
+        ],
+        signInSuccessURL: `movies.html`
+      }
+      ui.start(`.sign-in-or-sign-out`, authUIConfig)
+      
+    
+
+
+    
+  }//end of if statement
 
   
   })
