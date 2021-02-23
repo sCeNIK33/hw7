@@ -1,4 +1,36 @@
-window.addEventListener('DOMContentLoaded', async function(event) {
+firebase.auth().onAuthStateChanged(async function(user) {
+  
+  if (user) {
+    console.log(`signed in`)
+    db.collection(`users`).doc(user.uid).set({
+      email:user.email
+    })
+
+    document.querySelector(`sign-in-or-sign-out`).innerHTML = `
+    <button class = "pt-4 px-16 text-white text-center">Sign Out</button>
+    `
+    document.querySelector(`.sign-in-or-sign-out`).addEventListener(`click`, function(event){
+      firebase.auth().signOut()
+      document.location.href = `movies.html`
+    })
+    
+  } else {
+      console.log(`signed out`)
+      document.querySelector()
+
+
+      let ui = new firebaseui.auth.AuthUI(firebase.auth())
+
+      let AuthUIConfig = {
+        signInOptions: [
+          firebase.auth.EmailAuthProvider.PROVIDER_ID
+        ],
+        signInSuccessURL: `movies.html`
+      }
+      ui.start(`.sign-in-or-sign-out`, AuthUIConfig)
+    
+
+
     let db = firebase.firestore()
     let apiKey = 'db3d694f164aefeeaecbe1ceaa2f38bb'
     let response = await fetch(`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=en-US`)
@@ -29,6 +61,9 @@ window.addEventListener('DOMContentLoaded', async function(event) {
         await db.collection('watched').doc(`${movie.id}`).set({})
       }) 
     }
+  }
+
+  
   })
   
   // Goal:   Refactor the movies application from last week, so that it supports
