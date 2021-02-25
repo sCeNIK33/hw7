@@ -1,5 +1,5 @@
 # hw7
 
-Due Mar 11, 2021 
+Due Feb 25, 2021 @5pm 
 <br>
-<p>This is our team code for our final project. We selected project #XYZ.<p>
+<p>This the code for movies update to aadd log in users.<p>
